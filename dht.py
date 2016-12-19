@@ -43,14 +43,20 @@ while True:
         [hum, temp_c] = Adafruit_DHT.read_retry(DHT_SENSOR_TYPE,DHT_SENSOR_PIN)
         if isFloat(temp_c):
         	if (CONVERT_TO_FAHRENHEIT):
-        		temp_f = temp_c * 9.0 / 5.0 + 32.0
-        		# print("Temperature(F) = ", temp_f)
-        		streamer.log("Temperature(F)",temp_f)
+        	    temp_f = temp_c * 9.0 / 5.0 + 32.0
+        	    # print("Temperature(F) = ", temp_f)
+        	    streamer.log("Temperature(F)",temp_f)
                 GPIO.output(GPIO_LED_PIN,GPIO_HIGH)
         	else:
-        		# print("Temperature(C) = ", temp_c)
-        		streamer.log("Temperature(C)",temp_c)
+        	    # print("Temperature(C) = ", temp_c)
+        	    streamer.log("Temperature(C)",temp_c)
                 GPIO.output(GPIO_LED_PIN,GPIO_HIGHT)
+        if ((isFloat(hum)) and (hum >= 0)):
+    		# print("Humidity(%) = ", hum)
+        	streamer.log(":sweat_drops: Humidity(%)",hum)
+        streamer.flush()
+    except IOError:
+        print ("Error")
     try:
         ## if button is pressed
         GPIO.wait_for_edge(GPIO_SWITCH_PIN, GPIO.FALLING)
@@ -58,11 +64,5 @@ while True:
     except:
         pass
     GPIO.cleanup()
-# print("Humidity(%) = ", hum)
-        	streamer.log(":sweat_drops: Humidity(%)",hum)
-        streamer.flush()
-
-    except IOError:
-        print ("Error")
 
     time.sleep(SECONDS_BETWEEN_READS)
