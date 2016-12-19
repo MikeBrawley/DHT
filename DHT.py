@@ -1,6 +1,7 @@
 import Adafruit_DHT
 import os
 import time
+import RPi.GPIO as GPIO
 from ISStreamer.Streamer import Streamer
 
 # --------- User Settings ---------
@@ -18,7 +19,15 @@ ACCESS_KEY = "PLACE YOUR INITIAL STATE ACCESS KEY HERE"
 # Set the time between sensor reads
 SECONDS_BETWEEN_READS = 1
 CONVERT_TO_FAHRENHEIT = True
+GPIO_LED_PIN = 18 #GPIO pin for the script LED
+GPIO_SWITCH_PIN = 21 #GPIO pin for off switch
 # ---------------------------------
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(GPIO_LED_PIN,GPIO.OUT)
+GPIO.setup(GPIO_SWITCH_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 
 def isFloat(string):
     try:
@@ -37,10 +46,18 @@ while True:
         		temp_f = temp_c * 9.0 / 5.0 + 32.0
         		# print("Temperature(F) = ", temp_f)
         		streamer.log("Temperature(F)",temp_f)
+                GPIO.output(GPIO_LED_PIN,GPIO_HIGH)
         	else:
         		# print("Temperature(C) = ", temp_c)
         		streamer.log("Temperature(C)",temp_c)
-y
+                GPIO.output(GPIO_LED_PIN,GPIO_HIGHT)
+    try:
+        ## if button is pressed
+        GPIO.wait_for_edge(GPIO_SWITCH_PIN, GPIO.FALLING)
+        os.system("sudo shutdown -h now")
+    except:
+        pass
+    GPIO.cleanup()
 # print("Humidity(%) = ", hum)
         	streamer.log(":sweat_drops: Humidity(%)",hum)
         streamer.flush()
