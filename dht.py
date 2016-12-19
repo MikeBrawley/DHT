@@ -16,6 +16,7 @@ DHT_SENSOR_PIN = 4
 BUCKET_NAME = "PLACE YOUR INITIAL STATE BUCKET NAME HERE"
 BUCKET_KEY = "PLACE YOUR INITIAL STATE BUCKET KEY HERE"
 ACCESS_KEY = "PLACE YOUR INITIAL STATE ACCESS KEY HERE"
+STREAM_NAME = "PLACE YOUR INITIAL STATE STREAM NAME HERE"
 # Set the time between sensor reads
 SECONDS_BETWEEN_READS = 1
 CONVERT_TO_FAHRENHEIT = True
@@ -42,18 +43,18 @@ while True:
     try:
         [hum, temp_c] = Adafruit_DHT.read_retry(DHT_SENSOR_TYPE,DHT_SENSOR_PIN)
         if isFloat(temp_c):
-        	if (CONVERT_TO_FAHRENHEIT):
-        	    temp_f = temp_c * 9.0 / 5.0 + 32.0
-        	    # print("Temperature(F) = ", temp_f)
-        	    streamer.log("Temperature(F)",temp_f)
-                GPIO.output(GPIO_LED_PIN,GPIO_HIGH)
-        	else:
-        	    # print("Temperature(C) = ", temp_c)
-        	    streamer.log("Temperature(C)",temp_c)
-                GPIO.output(GPIO_LED_PIN,GPIO_HIGHT)
+            if (CONVERT_TO_FAHRENHEIT):
+                temp_f = temp_c * 9.0 / 5.0 + 32.0
+                # print("Temperature(F) = ", temp_f)
+                streamer.log(STREAM_NAME,temp_f)
+                GPIO.output(GPIO_LED_PIN,GPIO.HIGH)
+            else:
+                # print("Temperature(C) = ", temp_c)
+                streamer.log(STREAM_NAME,temp_c)
+                GPIO.output(GPIO_LED_PIN,GPIO.HIGHT)
         if ((isFloat(hum)) and (hum >= 0)):
-    		# print("Humidity(%) = ", hum)
-        	streamer.log(":sweat_drops: Humidity(%)",hum)
+    	    # print("Humidity(%) = ", hum)
+            streamer.log(":sweat_drops: %d Humidity(%)",hum) % STREAM_NAME
         streamer.flush()
     except IOError:
         print ("Error")
